@@ -2,6 +2,7 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { type PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
+<<<<<<< HEAD
 
 const queryString = process.env.DATABASE_URL;
 
@@ -17,3 +18,10 @@ try {
 }
 
 export { connection, db };
+=======
+
+const queryString = process.env.DATABASE_URL as string;
+export const connection = postgres(queryString);
+
+export const db = drizzle(connection);
+>>>>>>> 7483ced2ea854e7d2f9b1c41602429322a29f84d
