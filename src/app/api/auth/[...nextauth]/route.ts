@@ -8,6 +8,7 @@ import { users } from "@/app/lib/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
+// Define authOptions
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -105,7 +106,8 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      if (token) {
+      // Ensure session.user is defined
+      if (session.user) {
         session.user.id = token.id;
         session.user.role = token.role;
         session.user.email = token.email ?? '';
@@ -149,9 +151,11 @@ declare module "next-auth" {
   }
 
   interface Session {
-    user: User & {
+    user: {
       id: string;
       role: string;
+      email: string;
+      name: string;
     };
   }
 }
@@ -163,5 +167,8 @@ declare module "next-auth/jwt" {
   }
 }
 
+// Create the NextAuth handler
 const handler = NextAuth(authOptions);
+
+// Export the handler for GET and POST requests
 export { handler as GET, handler as POST };
