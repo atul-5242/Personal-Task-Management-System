@@ -15,5 +15,5 @@ try {
   console.error('Failed to connect to database:', error);
   throw error;
 }
-
 export { connection, db };
+

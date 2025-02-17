@@ -1,8 +1,10 @@
 'use client'
 
-import { useSession, signIn, signOut } from "next-auth/react";
-import { FaTasks, FaChartLine, FaUsersCog, FaRegClock } from "react-icons/fa";
+import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Link from 'next/link';
+import Image from 'next/image';
+import { FaTasks, FaChartLine, FaUsersCog, FaRegClock } from "react-icons/fa";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -30,34 +32,50 @@ export default function Home() {
     }
   ];
 
-  if (session) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-500 to-teal-400">
-        <div className="container mx-auto px-4 py-8 text-center">
-          <h1 className="text-4xl font-bold text-white mb-8">Welcome, {session.user.name || session.user.email}</h1>
-          <button
-            onClick={() => signOut()}
-            className="bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-200 backdrop-blur-sm"
-          >
-            Sign Out
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // Array of travel destination images
+  const placeImages = [
+    {
+      src: "https://images.unsplash.com/photo-1501747188-61c00b3d8ba0?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      alt: "Tropical Beach Paradise",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1517837125937-53bd402f49d6?q=80&w=1915&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      alt: "Mountain Landscape",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1518414881329-0f96c8f2a924?q=80&w=1789&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      alt: "Historic City",
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-500 to-teal-400">
+    <main>
       {/* Header */}
       <header className="fixed w-full top-0 z-50 bg-white/10 backdrop-blur-sm border-b border-white/20">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="text-2xl font-bold text-white">TaskMaster</div>
-          <button
-            onClick={() => signIn()}
-            className="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200"
-          >
-            Login
-          </button>
+          <div className="absolute right-4 top-4 flex items-center gap-4">
+            {session ? (
+              <>
+                <span className="text-white">
+                  Welcome, {session.user?.name || 'User'}
+                </span>
+                <button
+                  onClick={() => signOut()}
+                  className="px-6 py-2 text-white bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg hover:opacity-90 transition"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/components/auth/login"
+                className="px-6 py-2 text-white bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg hover:opacity-90 transition"
+              >
+                Login
+              </Link>
+            )}
+          </div>
         </div>
       </header>
 
@@ -71,12 +89,12 @@ export default function Home() {
             A powerful task management system designed to help you organize, track, and complete your projects efficiently.
           </p>
           <div className="flex gap-4 justify-center">
-            <button
-              onClick={() => signIn()}
+            <Link
+              href={session ? "/components/projects" : "/components/auth/login"}
               className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-purple-50 transition-all duration-200"
             >
               Get Started
-            </button>
+            </Link>
             <Link
               href="/components/auth/register"
               className="bg-white/10 text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/20 transition-all duration-200"
@@ -86,6 +104,20 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Add this before or after your main content */}
+      <div className="grid grid-cols-3 gap-8 my-16 px-8">
+        {placeImages.map((image, index) => (
+          <div key={index} className="relative h-[300px] rounded-xl overflow-hidden shadow-lg hover:scale-105 transition duration-300"> 
+            <Image
+              src={image.src}
+              alt={image.alt}
+              fill
+              className="object-cover"
+            />
+          </div>
+        ))}
+      </div>
 
       {/* Features Section */}
       <section className="py-20 px-4 bg-white/5 backdrop-blur-sm">
@@ -117,12 +149,14 @@ export default function Home() {
           <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
             Join thousands of users who have transformed their task management experience.
           </p>
-          <button
-            onClick={() => signIn()}
-            className="bg-white text-purple-600 px-12 py-4 rounded-lg font-semibold hover:bg-purple-50 transition-all duration-200 text-lg"
-          >
-            Start Free Today
-          </button>
+          <div className="text-center mt-8">
+            <Link
+              href={session ? "/projects" : "/components/auth/login"}
+              className="px-8 py-3 text-white bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg hover:opacity-90 transition"
+            >
+              Get Started
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -164,6 +198,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </div>
+    </main>
   );
 }

@@ -25,6 +25,8 @@ export const projects = pgTable('projects', {
   name: text('name').notNull(),
   description: text('description'),
   status: projectStatusEnum('status').default('active'),
+  priority: taskPriorityEnum('priority').default('medium'),
+  dueDate: timestamp('due_date'),
   userId: serial('user_id').references(() => users.id),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
@@ -39,18 +41,20 @@ export const categories = pgTable('categories', {
   updatedAt: timestamp('updated_at').defaultNow(),
 });
 
-// Tasks table (Updated to include categoryId)
+// Tasks table
 export const tasks = pgTable('tasks', {
   id: serial('id').primaryKey(),
   title: text('title').notNull(),
   description: text('description'),
   status: taskStatusEnum('status').default('pending'),
-  priority: taskPriorityEnum('priority').default('medium'),
+  priority: taskPriorityEnum('priority').default('medium').notNull(),
   dueDate: timestamp('due_date'),
+  completedAt: timestamp('completed_at'),
   isRecurring: boolean('is_recurring').default(false),
+  recurringInterval: text('recurring_interval'),
   userId: serial('user_id').references(() => users.id),
   projectId: serial('project_id').references(() => projects.id),
-  categoryId: serial('category_id').references(() => categories.id), // New field
+  categoryId: serial('category_id').references(() => categories.id),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });

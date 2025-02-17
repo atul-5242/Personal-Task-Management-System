@@ -15,6 +15,20 @@
       "when": 1739718193100,
       "tag": "0001_bored_screwball",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1739786913180,
+      "tag": "0002_little_devos",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1739810320939,
+      "tag": "0003_petite_outlaw_kid",
+      "breakpoints": true
     }
   ]
 }
