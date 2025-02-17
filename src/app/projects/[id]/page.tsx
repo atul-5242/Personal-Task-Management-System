@@ -50,22 +50,7 @@ export default function ProjectDetails() {
         return 'bg-gray-500/20 text-gray-100';
     }
   };
-  // @ts-expect-error
-  const handleStatusChange = async (taskId: number, newStatus: string) => {
-    try {
-      const response = await fetch(`/api/tasks/${taskId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (!response.ok) throw new Error('Failed to update task status');
-      // Refetch tasks to update the UI
-      queryClient.invalidateQueries(['tasks', parseInt(params.id as string)]);
-    } catch (error) {
-      console.error('Error updating task status:', error);
-    }
-  };
+ 
 
   if (!project) {
     return (
@@ -133,10 +118,10 @@ export default function ProjectDetails() {
                     <div>
                       <h3 className="text-white font-medium">{task.title}</h3>
                       <p className="text-white/70">{task.description}</p>
-                      {/* @ts-expect-error */}
+                      {/* @ts-expect-error - Task type does not include category, but it is expected to be present */}
                       {task.category && (
                         <span className="inline-block bg-purple-500/20 text-white text-sm px-2 py-1 rounded mt-2">
-                          {/* @ts-expect-error */}
+                          {/* @ts-expect-error - Task type does not include category, but it is expected to be present */}
                           {task.category.name}
                         </span>
                       )}
