@@ -6,7 +6,7 @@ import { Task } from '@/app/types/task';
 
 interface TaskFormProps {
   projectId: number;
-  categoryId: number;
+  categoryId?: number;
   onClose: () => void;
   onSuccess: (task: Task) => void;
 }
