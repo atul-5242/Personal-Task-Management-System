@@ -7,6 +7,7 @@ import { FaArrowLeft, FaPlus, FaCalendar, FaList } from "react-icons/fa";
 import Calendar from '@/app/components/shared/Calendar';
 import TaskForm from '@/app/components/tasks/TaskForm';
 import { useTasks } from '@/app/hooks/useTasks';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ProjectDetails() {
   const router = useRouter();
@@ -16,11 +17,54 @@ export default function ProjectDetails() {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const { tasks, isLoading: isLoadingTasks } = useTasks(parseInt(params.id as string));
+  const queryClient = useQueryClient();
 
   const project = projects.find(p => p.id === parseInt(params.id as string));
 
   const handleTaskCreated = () => {
     setIsTaskModalOpen(false);
+  };
+
+  const getStatusBadgeColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'bg-green-500';
+      case 'in_progress':
+        return 'bg-blue-500';
+      case 'pending':
+        return 'bg-yellow-500';
+      default:
+        return 'bg-gray-500';
+    }
+  };
+
+  const getPriorityBadgeColor = (priority: string) => {
+    switch (priority) {
+      case 'high':
+        return 'bg-red-500/20 text-red-100';
+      case 'medium':
+        return 'bg-yellow-500/20 text-yellow-100';
+      case 'low':
+        return 'bg-green-500/20 text-green-100';
+      default:
+        return 'bg-gray-500/20 text-gray-100';
+    }
+  };
+
+  const handleStatusChange = async (taskId: number, newStatus: string) => {
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) throw new Error('Failed to update task status');
+      // Refetch tasks to update the UI
+      queryClient.invalidateQueries(['tasks', parseInt(params.id as string)]);
+    } catch (error) {
+      console.error('Error updating task status:', error);
+    }
   };
 
   if (!project) {
@@ -85,9 +129,56 @@ export default function ProjectDetails() {
                 <div className="text-white">Loading tasks...</div>
               ) : tasks.length > 0 ? (
                 tasks.map(task => (
-                  <div key={task.id} className="bg-white/5 p-4 rounded-lg">
-                    <h3 className="text-white font-medium">{task.title}</h3>
-                    <p className="text-white/70">{task.description}</p>
+                  <div key={task.id} className="bg-white/5 p-4 rounded-lg flex items-center justify-between">
+                    <div>
+                      <h3 className="text-white font-medium">{task.title}</h3>
+                      <p className="text-white/70">{task.description}</p>
+                      {task.category && (
+                        <span className="inline-block bg-purple-500/20 text-white text-sm px-2 py-1 rounded mt-2">
+                          {task.category.name}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <select
+                        value={task.status}
+                        onChange={async (e) => {
+                          const response = await fetch(`/api/tasks/${task.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ status: e.target.value }),
+                          });
+                          if (response.ok) {
+                            queryClient.invalidateQueries({ queryKey: ['tasks', params.id] });
+                          }
+                        }}
+                        className={`px-3 py-1 rounded-lg text-sm font-medium ${getStatusBadgeColor(task.status)}`}
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                      </select>
+
+                      {/* Add Priority Dropdown */}
+                      <select
+                        value={task.priority}
+                        onChange={async (e) => {
+                          const response = await fetch(`/api/tasks/${task.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ priority: e.target.value }),
+                          });
+                          if (response.ok) {
+                            queryClient.invalidateQueries({ queryKey: ['tasks', params.id] });
+                          }
+                        }}
+                        className={`px-3 py-1 rounded-lg text-sm font-medium ${getPriorityBadgeColor(task.priority)}`}
+                      >
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </select>
+                    </div>
                   </div>
                 ))
               ) : (

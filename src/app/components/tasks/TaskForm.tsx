@@ -16,7 +16,7 @@ export default function TaskForm({ projectId, categoryId, onClose, onSuccess }: 
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    status: 'pending' as const,
+    status: 'pending' as 'pending' | 'in_progress' | 'completed',
     priority: 'medium' as const,
     dueDate: '',
     category: {
@@ -66,6 +66,35 @@ export default function TaskForm({ projectId, categoryId, onClose, onSuccess }: 
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
           rows={3}
         />
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
+          <select
+            id="status"
+            value={formData.status}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+          >
+            <option value="pending">Pending</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="priority" className="block text-sm font-medium text-gray-700">Priority</label>
+          <select
+            id="priority"
+            value={formData.priority}
+            onChange={(e) => setFormData({ ...formData, priority: e.target.value as any })}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+          >
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
       </div>
       <div>
         <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category (Optional)</label>
