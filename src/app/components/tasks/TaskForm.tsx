@@ -73,7 +73,7 @@ export default function TaskForm({ projectId, categoryId, onClose, onSuccess }: 
           <select
             id="status"
             value={formData.status}
-            // @ts-ignore
+            // @ts-expect-error
             onChange={(e) => setFormData({ ...formData, status: e.target.value  })}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
           >
@@ -88,7 +88,7 @@ export default function TaskForm({ projectId, categoryId, onClose, onSuccess }: 
           <select
             id="priority"
             value={formData.priority}
-            // @ts-ignore
+            // @ts-expect-error
             onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
           >

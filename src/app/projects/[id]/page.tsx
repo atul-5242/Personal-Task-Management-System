@@ -50,7 +50,7 @@ export default function ProjectDetails() {
         return 'bg-gray-500/20 text-gray-100';
     }
   };
-  // @ts-expect
+  // @ts-expect-error
   const handleStatusChange = async (taskId: number, newStatus: string) => {
     try {
       const response = await fetch(`/api/tasks/${taskId}`, {
@@ -133,10 +133,10 @@ export default function ProjectDetails() {
                     <div>
                       <h3 className="text-white font-medium">{task.title}</h3>
                       <p className="text-white/70">{task.description}</p>
-                      {/* @ts-ignore */}
+                      {/* @ts-expect-error */}
                       {task.category && (
                         <span className="inline-block bg-purple-500/20 text-white text-sm px-2 py-1 rounded mt-2">
-                          {/* @ts-ignore */}
+                          {/* @ts-expect-error */}
                           {task.category.name}
                         </span>
                       )}
